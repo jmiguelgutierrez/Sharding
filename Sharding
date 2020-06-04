@@ -192,4 +192,89 @@
   
   WORDPAD
      Extension *.rtf
-     
+                                                              MONGODUMP
+                                       PR 
+                                    __________
+                                    __________               Uno de los ficheros del Backup es oplog.json     
+                                    __________
+                                    __________                                          
+                                      
+                                  /          \  
+                                 /            \                          
+                 __________     /              \        __________
+                 __________    /                \       __________     
+                 __________                             __________                                  
+                 __________                             __________
+
+ >mongorestore --port 27300 data\backup\bk17022020
+ 
+ >mongodump --port 27300 --out=data2\backup\bkgetafefoo17022020 --db "getafe" --collection "foo"
+ 
+ 
+MONGODUMP Y MONGORESTORE
+Exportación e importación de datos
+
+mongoexport <opciones>
+-- host <dirección:puerto>
+-- uri  <formato-uri>
+-- db   <nombre-basedatos>
+-- collection <nombre-colección>
+-- fields <campo1, campo2>
+-- type = csv
+-- noHeaderline
+-- out=ruta/<archivo>.json | .csv
+
+mongoexport --db="maraton" --collection="participantes" --out=maraton\participantes.json
+
+Un añadido
+       -- fields = nombre, dni
+       -- noHeaderLine
+       -- type=csv
+*.csv
+URI Mongodb <string>
+
+"mongodb://<direccion>:<puerto>"
+"mongodb://<direccion>:<puerto>/<basedatos>"
+
+Mongoimport
+mongoimport <opciones>
+
+-- host <dirección:puerto>
+-- db   <nombre-basedatos>
+-- collection <nombre-colección>
+-- type = <json|csv|tsv>
+-- file = <archivo>.json | .csv |.tsv
+-- mode = <insert | upsert| merge>
+
+Shift-Alt y flecha hacia abajo |
+                               v
+En local 
+   mongoimport  --db="colegio" --collection="alumnos" --file="colegio\alumnos.json"
+   
+use colegio
+db.alumnos.find()
+En todos  los casos el campo de comparación es _id
+
+insert => Inserta con operación de escritura desordenada
+upsert => Modifica el documento que encuentra o lo crea si no existe ese _id
+merge =>  Fusiona los campos de los registros que encuentra o crea el registro si no existe ese _id
+
+Motor de Almacenamiento en MongoDB
+  - WiredTiger
+  - In-memory
+
+WiredTiger MVCC (Control de concurrencia de conversión múltiple)
+¿Como realiza WiredTiger las operaciones de escritura?
+
+1.- Sin tener activado el journal
+    (desaconsejado)
+              __________________________________________
+                              mongod                      Sin Journal
+                              
+       ---  RAM -------------------------------------------
+       |     Vista Compartida                             |                             
+       |                                                  |  
+       |__________________________________________________|  
+                     | flush
+                     |
+                     ______________________________ DISCO
