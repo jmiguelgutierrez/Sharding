@@ -170,4 +170,26 @@
                                                                  ______________________
                                                                  mongod port 27300
                                                                               
-                                                  
+  https:\\docs.mongodb.com/manual/reference/method
+  
+           \/  mongo Shell Methods
+           \/  User Management Methods
+           
+           ________________________________________________________
+  Tenemos el Servidor y volcaremos info en Backup
+  
+  mongod --port 27300 --dbpath data2\server
+  mongod --port 27300
+  
+  ___       mongodump ___________________________
+  |                                              |
+  |                                              |
+  |                                              |
+  |                                              |
+  _______________________________________________ 
+  
+  >mongodump --port 27300 --out=data2\backup\bk17022020
+  
+  WORDPAD
+     Extension *.rtf
+     
