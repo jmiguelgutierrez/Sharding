@@ -129,3 +129,45 @@
                     updateUser:"juan73",
                     roles:[{role:"readWrite",db:"gimnasio"}]
                     
+  rol "read"
+  rol "readWrite"
+  rol "dbAdmin"
+  rol "userAdmin"
+  rol "dbOwner"
+  rol "readAnyDatabase"
+  
+  >use admin -> Tenemos que estar en B.Datos admin
+  >db.system.users.find({user:"juan73"}).pretty()
+  
+  >db.runCommand({
+           grantRolesToUser:"juan73"
+           roles:[{role:"readAnyDatabase",db:"admin"})
+  -> Tenemos que irnos a gimnasio para logarme con juan73
+  Poner
+  >db.runCommand({
+                grantRolesToUser:"juan73",
+                roles:[{role:"readAnyDatabase",db:"admin"}]})
+                
+  Apuntes sobre manual
+  Simbolo del sistema - mongo - authenticationDatabase "admin" -u "superAdmin"
+  
+  db.createRole({
+                  role:"soloEscrituraInteresados",
+                  privileges:[
+                  {resource:{ db:"gimnasio",
+                              collections: "interesados"},
+                              actions: ["find","insert","update","remove"]}],
+                   roles:[{role:"read",db:"gimnasio"}]
+    })
+    
+    mongo --authenticationDatabase "gimnasio" -u "maria73"
+    
+    - data2
+       - backup                                                  ______________________
+       - server                                                  ______________________
+                                                                 ______________________  data2
+                                                                 ______________________
+                                                                 ______________________
+                                                                 mongod port 27300
+                                                                              
+                                                  
