@@ -1,0 +1,131 @@
+   MONGOS 27300                        27100 
+                                    __________
+                                    __________                                
+                                    __________
+                                    __________                                       1 CLUSTER DE 3 SERVIDORES                 
+                                      
+                                  /          \  
+                                 /            \                           
+                   27101                                  27102  
+                 __________     /              \        __________
+                 __________    /                \       __________     
+                 __________                             __________                                  
+                 __________                             __________
+                 
+              27200    ______________________________________ 27201
+                 _____|____                             ____|_____
+                 __________                             __________     
+                 __________                             __________                   2 SERVIDORES EN SHARDING                
+                 __________                             __________
+                 
+ >mongos --configdb configServerGetafe/localhost:27100, localhost:27101, localhost:27102 --port 27300
+ 
+ >mongo --port 27300
+ 
+ >sh.addShard("localhost:27200")
+ 
+ >sh.addShard("localhost:27201")
+ >sh.status()
+ 
+ Shard Key
+ chunk
+                                             |
+                                             |
+                                             |
+   ________________________________________________________________________________________________________________                                        
+   |                      |                           |                            |                              |
+   |                      |                           |                            |                              |
+   __________________  ____________________  _________________________    ________________________  ______________________
+   |  chunk  |_|     | |                   | |                        |   |                      |  |                     |
+   |  chunk  |_|     | |                   | |                        |   |                      |  |                     |
+   |  chunk  |_|     | |                   | |                        |   |                      |  |                     |
+   |                 | |                   | |                        |   |                      |  |                     |
+   ___________________ ____________________   ________________________     _______________________   _____________________
+          0-20                20-40                    40-60                       60-80                       80-100
+          
+  show dbs
+  use config
+  db.settings.save({_id:"chunksize",value:16})
+  sh.enableSharding("shop")  -> Podemos hacer SHARDING en esa B.Datos
+  sh.shardCollection("shop.clientes",{edad:1})
+  
+  >use shop
+  db.clientes.getShardDistribution()
+  Convertir la colección no-sharding en sharding
+    - Aplicar un índice con la/las claves que vaya a aplicar en el sharding
+    - Usar el método sh.enableSharding(...)
+    - Usar el método sh.shardCollection(...)
+   
+  >use config
+  >db.databases.find()
+  
+  >use gimnasio
+  >db.monitores.insert({nombre:"Juan",apellidos:"Pérez"})
+                               ________________________________________________________
+                               
+  DRIVERS
+                   docs.mongodb.com
+                   MONGODB Drivers and ODM
+                   github.com\angular
+                  
+  Levantar el servidor y la shell con > mongo   <- SHELL
+                                      > mongod  <- SERVIDOR
+                                      
+  db.createUser({
+          user:"pedro",
+          pwd: "pedro1234",
+          customData:{dni:"56466262P"}
+          roles:[
+                  "readWrite"
+                ]})
+  Base de Datos admin
+    system.users
+    system.version
+  >db.system.users.find().pretty()
+  pwd: supercalifragilisticoespialidoso
+  >db.createUser({
+            user:"superAdmin",
+            pwd:"supercalifragilisticoespialidoso",
+            roles:[
+                {role:"userAdminAnyDatabase",db:"admin"},
+                 "readWriteAnyDatabase"]})
+  mongod --auth
+  mongo --authenticationDatabase "maraton"-u "pedro"
+  mongo --authenticationDatabase "admin"-u "superAdmin"
+  
+  Arrancamos en un terminal:
+  >mongod --auth
+  En otro terminal ponemos
+  >mongo --authenticationDatabase "admin" -u "superAdmin"
+  show dbs
+  use gimnasio
+                                            db.createUser({
+                                                    user:"juan73",
+                                                    pwd:"juan1234",
+                                                    roles:["read"]
+                                                   })
+      
+    __________________   <------------________________________
+    __________________                |                      |
+    __________________                |                      |  
+    __________________                |                      |
+                       <               ________________________ 
+                        \              
+                         \             
+                          \-----------________________________
+                                      |                      |
+                                      |                      |
+                                      |                      |
+                                      ________________________
+   En otra consola
+   >mongo --authenticationDatabase "gimnasio" -u "juan73"
+   
+   >use admin
+   >db.runCommand({
+                    usersInfo:"juan73"          Para ver los roles que tiene ese usuario
+                    showPrivileges:true
+                  })
+   >db.runCommand({                             En la terminal de SuperAdmin
+                    updateUser:"juan73",
+                    roles:[{role:"readWrite",db:"gimnasio"}]
+                    
